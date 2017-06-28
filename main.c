@@ -24,7 +24,9 @@ int vRand(int Min,int Max){
 	return(rand() % (Max-Min)+Min);
 }
 
-bool vCheckBomb(int val, int *arr, int length){
+bool vCheckBomb(int *bombX, int *bombY, int length){
+	// flag = true-bomb | false-no bomb
+	
 	if(length == 1){ // level 1 - Beginner - 10 bomb
 		length = 10;
 	}else if(length == 2){ // level  - Normal - 50 bomb
@@ -33,6 +35,25 @@ bool vCheckBomb(int val, int *arr, int length){
 		length = 100;
 	}
 	// printf("length now: %d \n", length);
+	
+	if(_iDirection == 1){ // 1 - Left
+		
+	}else if(_iDirection == 2){ // 2 - Right
+		// X remain, Y check
+		// Check iBombX = player position row
+		int i, j;
+		for(i = 0; i < length; i++){
+			if(bombX[i] == pX){
+				// Row found, check for Column - Y
+				for(j = 0; j < length; j++){
+					// check column
+					// pY + along the steps
+					// TODO
+					if(bombY[j] == )
+				}
+			}
+		}
+	}
 	
 	int i;
 	for(i = 0; i < length; i++){
