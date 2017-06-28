@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
@@ -18,6 +19,29 @@ int iInitial = 0;
 const int _iLevel; // const get user input - level
 int _iDirection, _iSteps; // Movement: direction, steps
 int iLife = 3; // Player's Lifes
+
+int vRand(int Min,int Max){
+	return(rand() % (Max-Min)+Min);
+}
+
+bool vCheckBomb(int val, int *arr, int length){
+	if(length == 1){ // level 1 - Beginner - 10 bomb
+		length = 10;
+	}else if(length == 2){ // level  - Normal - 50 bomb
+		length = 50;
+	}else if(length == 3){ // level  - Hard - 100 bomb
+		length = 100;
+	}
+	// printf("length now: %d \n", length);
+	
+	int i;
+	for(i = 0; i < length; i++){
+		if(arr[i] == val){
+			return true;
+		}
+	}
+	return false;
+}
 
 void vGenerateBomb(int level){
 //	printf("vGenerateBomb(%d) \n", level);
@@ -132,6 +156,11 @@ int vMove(int direction, int steps){
 					platform[i][j] = ' ';
 				}
 			}
+			
+			// Check for bomb
+//			for(){
+//				
+//			}
 			pY += steps; // Update player position
 		}
 		return 1;
@@ -182,14 +211,21 @@ int vMove(int direction, int steps){
 
 void vStartGame(int level){
 	// Generate Bomb
-	if(level != 1 && level != 2 && level != 3){
-		printf("Invalid Level Input! %c", NEWLINE);
-	}else{
-		vGenerateBomb(level);
-	}
-
-	// Platform
 	if(iInitial == 0){
+		if(level != 1 && level != 2 && level != 3){
+			printf("Invalid Level Input! %c", NEWLINE);
+		}else{
+			vGenerateBomb(level);
+		}
+		vGetBomb(level);
+		
+		if(vCheckBomb(19, iBombX, _iLevel) == true){
+			printf("found!\n");
+		}else{
+			printf("nope found!\n");
+		}
+		
+		// Platform
 		vBuildPlatform();
 		vGetPlatform();
 		iInitial = 1;
@@ -204,6 +240,7 @@ void vStartGame(int level){
 			exit(0);
 		}else if(_iDirection != 1 && _iDirection != 2 && _iDirection != 3 && _iDirection != 4 && _iDirection != 9){
 			printf("Invalid movement-direction Input! %c", NEWLINE);
+			continue;
 		}else{
 			// ok do nothing
 		}
@@ -212,30 +249,23 @@ void vStartGame(int level){
 		scanf("%d", &_iSteps);
 		
 		if(vMove(_iDirection, _iSteps) == 0){
-			// movement invalid
+			// movement invalid0
 		}else{
 			break; // valid movement
 		}
 	}
-	
 	vGetPlatform(); // print valid movement platform
-
-	
 }
 
-int vRand(int Min,int Max){
-	return(rand() % (Max-Min)+Min);
-}
+
 
 
 int main(int argc, char *argv[]) {
 	srand(time(NULL)); // Random seed
-//	const int _iLevel; // const get user input - level
-//	int _iDirection, _iSteps; // Movement: direction, steps
-//	int iLife = 3; // Player's Lifes
 
 	// Get user input - difficulties level
 	do{
+		printf("Remaining Life: %d \n", iLife);
 		printf("Difficulties: 1 - Beginner, 2 - Intermediate, 3 - Advance : "); // 1-10 | 2-50 | 3-100
 		scanf("%d", &_iLevel);
 		
@@ -249,7 +279,12 @@ int main(int argc, char *argv[]) {
 	// Start Game
 	do{
 		vStartGame(_iLevel);
-	}while(iLife != 0);
+		
+		if(iLife <= 0){
+			printf("Game over. Remaining life: %d \n", iLife);
+			break;
+		}
+	}while(1);
 	
 	return 0;
 } 
