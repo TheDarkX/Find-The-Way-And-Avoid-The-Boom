@@ -41,3 +41,22 @@ structure.
 You need to use multi-subscripted array and you are required to improve your code structure
 by using functions. You’re encouraged to add in any additional controls, validations or
 messages which you think are appropriate.
+
+Followings are some sample screenshots of the game (you are allowed to have variances of
+display design, arrangement or style, as long as it fulfilled the game requirement as stated
+above).
+
+Screenshot 1: Program starts, the map is masked out in asterisks (*) with entrance labelled
+with ‘S’ and exit labelled with ‘E’
+![alt text](https://hostr.co/file/970/OlqOU8BY7nzG/b1.png)
+
+Screenshot 2: Player input the direction and number of steps to move
+![alt text](https://hostr.co/file/970/yViZ9teafEPQ/b2.png)
+
+Screenshot 3: The path that player navigated through is un-masked
+![alt text](https://hostr.co/file/970/JGplZXiqLDcD/b3.png)
+
+Screenshot 4: Game finished. Player successfully reaches the exit without stepping on any
+boom. If player step on any boom, game finished and you have to display the appropriate
+ending messages.
+![alt text](https://hostr.co/file/970/5JsMDo03zz1K/b4.png)
