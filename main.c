@@ -20,50 +20,6 @@ const int _iLevel; // const get user input - level
 int _iDirection, _iSteps; // Movement: direction, steps
 int iLife = 3; // Player's Lifes
 
-int vRand(int Min,int Max){
-	return(rand() % (Max-Min)+Min);
-}
-
-bool vCheckBomb(int *bombX, int *bombY, int length){
-	// flag = true-bomb | false-no bomb
-	
-	if(length == 1){ // level 1 - Beginner - 10 bomb
-		length = 10;
-	}else if(length == 2){ // level  - Normal - 50 bomb
-		length = 50;
-	}else if(length == 3){ // level  - Hard - 100 bomb
-		length = 100;
-	}
-	// printf("length now: %d \n", length);
-	
-	if(_iDirection == 1){ // 1 - Left
-		
-	}else if(_iDirection == 2){ // 2 - Right
-		// X remain, Y check
-		// Check iBombX = player position row
-		int i, j;
-		for(i = 0; i < length; i++){
-			if(bombX[i] == pX){
-				// Row found, check for Column - Y
-				for(j = 0; j < length; j++){
-					// check column
-					// pY + along the steps
-					// TODO
-					if(bombY[j] == )
-				}
-			}
-		}
-	}
-	
-	int i;
-	for(i = 0; i < length; i++){
-		if(arr[i] == val){
-			return true;
-		}
-	}
-	return false;
-}
-
 void vGenerateBomb(int level){
 //	printf("vGenerateBomb(%d) \n", level);
 	if(level == 1){ // Easy
@@ -110,6 +66,42 @@ void vGetBomb(int level){
 	}
 }
 
+int vRand(int Min,int Max){
+	return(rand() % (Max-Min)+Min);
+}
+
+void vCheckBomb(int *bombX, int *bombY, int level){
+	// flag = true-bomb | false-no bomb
+	int length;
+	if(level == 1){ // level 1 - Beginner - 10 bomb
+		length = 10;
+	}else if(level == 2){ // level  - Normal - 50 bomb
+		length = 50;
+	}else if(level == 3){ // level  - Hard - 100 bomb
+		length = 100;
+	}
+	// printf("length now: %d \n", length);
+	
+	if(_iDirection == 1){ // 1 - Left
+		// TODO
+	}else if(_iDirection == 2){ // 2 - Right
+		// X remain, Y check
+		// Check iBombX = player position row
+		int i, j, k;
+		for(i = 0; i < length; i++){ 				// iBombX check
+			if(bombX[i] == pX){ 					// Row found
+				if(pY >= bombY[i]){					// Col found
+					printf("[BOMB!!!!!] %d %d \n", bombX[i], bombY[i]);
+					bombX[i] = 0;
+					bombY[i] = 0;
+					vGetBomb(level);
+					iLife -= 1;
+				}
+			}
+		}
+	}
+}
+
 void vGetPlatform(){
 	int i, j;
 	for(i=0; i<20; i++){
@@ -142,14 +134,23 @@ void vBuildPlatform(){
 	}
 }
 
-int vMove(int direction, int steps){
+bool vMove(int direction, int steps, int level){
+	int length;
+	if(level == 1){ // level 1 - Beginner - 10 bomb
+		length = EASY;
+	}else if(level == 2){ // level  - Normal - 50 bomb
+		length = NORMAL;
+	}else if(level == 3){ // level  - Hard - 100 bomb
+		length = HARD;
+	}
+	
 	if(direction == 1){ // Left
 		// Boundary check
 		int boundary = pY - steps;
 		if(boundary < 0){
 			vGetPlatform();
 			printf("Invalid move, out of boundary! \n");
-			return 0;
+			return false;
 		}else{
 			// Unmask the map
 			int i, j;
@@ -160,7 +161,7 @@ int vMove(int direction, int steps){
 			}
 			pY -= steps; // Update player position
 		}
-		return 1;
+		return true;
 		
 	}else if(direction == 2){ // Right
 		// Boundary check
@@ -168,7 +169,7 @@ int vMove(int direction, int steps){
 		if(boundary > 49){
 			vGetPlatform();
 			printf("Invalid move, out of boundary! \n");
-			return 0;
+			return false;
 		}else{
 			// Unmask the map
 			int i, j;
@@ -177,14 +178,9 @@ int vMove(int direction, int steps){
 					platform[i][j] = ' ';
 				}
 			}
-			
-			// Check for bomb
-//			for(){
-//				
-//			}
 			pY += steps; // Update player position
 		}
-		return 1;
+		return true;
 		
 	}else if(direction == 3){ // Up
 		// Boundary check
@@ -192,7 +188,7 @@ int vMove(int direction, int steps){
 		if(boundary < 0){
 			vGetPlatform();
 			printf("Invalid move, out of boundary! \n");
-			return 0;
+			return false;
 		}else{
 			// Unmask the map
 			int i, j;
@@ -203,7 +199,7 @@ int vMove(int direction, int steps){
 			}
 			pX -= steps; // Update player position
 		}
-		return 1;
+		return true;
 		
 	}else if(direction == 4){ // Down
 		// Boundary check
@@ -211,7 +207,7 @@ int vMove(int direction, int steps){
 		if(boundary > 19){
 			vGetPlatform();
 			printf("Invalid move, out of boundary! \n");
-			return 0;
+			return false;
 		}else{
 			// Unmask the map
 			int i, j;
@@ -222,11 +218,11 @@ int vMove(int direction, int steps){
 			}
 			pX += steps; // Update player position
 		}
-		return 1;
+		return true;
 		
 	}else{
 		printf("Invalid move! \n");
-		return 0;
+		return false;
 	}
 }
 
@@ -240,12 +236,6 @@ void vStartGame(int level){
 		}
 		vGetBomb(level);
 		
-		if(vCheckBomb(19, iBombX, _iLevel) == true){
-			printf("found!\n");
-		}else{
-			printf("nope found!\n");
-		}
-		
 		// Platform
 		vBuildPlatform();
 		vGetPlatform();
@@ -254,6 +244,8 @@ void vStartGame(int level){
 	
 	// Movement - Direction, Steps
 	while(1){
+		printf("[Information] Player position: %d %d \n", pX, pY);
+		printf("[Information] Remaining Life: %d \n", iLife);
 		printf("Enter command (1-left, 2-right, 3-up, 4-down, 9-end): ");
 		scanf("%d", &_iDirection);
 		
@@ -269,12 +261,13 @@ void vStartGame(int level){
 		printf("Enter steps to move: ");
 		scanf("%d", &_iSteps);
 		
-		if(vMove(_iDirection, _iSteps) == 0){
-			// movement invalid0
+		if(vMove(_iDirection, _iSteps, _iLevel) == false){
+			// movement invalid
 		}else{
 			break; // valid movement
 		}
 	}
+	vCheckBomb(iBombX, iBombY, _iLevel);
 	vGetPlatform(); // print valid movement platform
 }
 
@@ -286,8 +279,8 @@ int main(int argc, char *argv[]) {
 
 	// Get user input - difficulties level
 	do{
-		printf("Remaining Life: %d \n", iLife);
-		printf("Difficulties: 1 - Beginner, 2 - Intermediate, 3 - Advance : "); // 1-10 | 2-50 | 3-100
+		printf("[Information] Remaining Life: %d \n", iLife);
+		printf("Enter command (Difficulties: 1 - Beginner, 2 - Intermediate, 3 - Advance): "); // 1-10 | 2-50 | 3-100
 		scanf("%d", &_iLevel);
 		
 		if(_iLevel != 1 && _iLevel != 2 && _iLevel != 3){
