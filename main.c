@@ -8,38 +8,41 @@
 #define EASY 10
 #define NORMAL 50
 #define HARD 100
+#define LEVEL 
 
 char platform[20][50];
 int pX = 0;
-int pY= 1;
+int pY= 0;
 int iBombX[20];
 int iBombY[50];
 
 int iInitial = 0;
-const int _iLevel; // const get user input - level
-int _iDirection, _iSteps; // Movement: direction, steps
+int _iLevel = 0; // const get user input - level
+int _iDirection = 0; 
+int _iSteps = 0; // Movement: direction, steps
 int iLife = 3; // Player's Lifes
+int iTotalSteps = 0; // Total steps moved
 
 void vGenerateBomb(int level){
 //	printf("vGenerateBomb(%d) \n", level);
 	if(level == 1){ // Easy
 		int i;
 		for(i=0; i<EASY; i++){
-			iBombX[i] = vRand(1,20);
+			iBombX[i] = vRand(0,20);
 			iBombY[i] = vRand(1,50);
 		}
 //		printf("Generated %d bomb! %c", EASY, NEWLINE);
 	}else if(level == 2){ // Normal
 		int i;
 		for(i=0; i<NORMAL; i++){
-			iBombX[i] = vRand(1,20);
+			iBombX[i] = vRand(0,20);
 			iBombY[i] = vRand(1,50);
 		}
 //		printf("Generated %d bomb! %c", NORMAL, NEWLINE);
 	}else if(level == 3){ // Hard
 		int i;
 		for(i=0; i<HARD; i++){
-			iBombX[i] = vRand(1,20);
+			iBombX[i] = vRand(0,20);
 			iBombY[i] = vRand(1,50);
 		}
 //		printf("Generated %d bomb! %c", HARD, NEWLINE);
@@ -89,7 +92,7 @@ void vCheckBomb(int *bombX, int *bombY, int level){
 		for(i = 0; i < length; i++){ 				// iBombX check
 			if(bombX[i] == pX){ 					// Row found
 				if(pY <= bombY[i]){					// Col found
-					printf("[BOMB!!!!!] %d %d \n", bombX[i], bombY[i]);
+					printf("[!!!!!!!!!!!!!!! BOMB !!!!!!!!!!!!!!!] %d %d \n", bombX[i], bombY[i]);
 					bombX[i] = 0;
 					bombY[i] = 0;
 					iLife -= 1;
@@ -103,7 +106,7 @@ void vCheckBomb(int *bombX, int *bombY, int level){
 		for(i = 0; i < length; i++){ 				// iBombX check
 			if(bombX[i] == pX){ 					// Row found
 				if(pY >= bombY[i]){					// Col found
-					printf("[BOMB!!!!!] %d %d \n", bombX[i], bombY[i]);
+					printf("[!!!!!!!!!!!!!!! BOMB !!!!!!!!!!!!!!!] %d %d \n", bombX[i], bombY[i]);
 					bombX[i] = 0;
 					bombY[i] = 0;
 					iLife -= 1;
@@ -117,7 +120,7 @@ void vCheckBomb(int *bombX, int *bombY, int level){
 		for(j = 0; j < length; j++){
 			if(bombY[j] == pY){
 				if(pX <= bombX[j]){
-					printf("[BOMB!!!!!] %d %d \n", bombX[j], bombY[j]);
+					printf("[!!!!!!!!!!!!!!! BOMB !!!!!!!!!!!!!!!] %d %d \n", bombX[j], bombY[j]);
 					bombX[j] = 0;
 					bombY[j] = 0;
 					iLife -= 1;
@@ -131,7 +134,7 @@ void vCheckBomb(int *bombX, int *bombY, int level){
 		for(j = 0; j < length; j++){
 			if(bombY[j] == pY){
 				if(pX >= bombX[j]){
-					printf("[BOMB!!!!!] %d %d \n", bombX[j], bombY[j]);
+					printf("[!!!!!!!!!!!!!!! BOMB !!!!!!!!!!!!!!!] %d %d \n", bombX[j], bombY[j]);
 					bombX[j] = 0;
 					bombY[j] = 0;
 					iLife -= 1;
@@ -199,6 +202,7 @@ bool vMove(int direction, int steps, int level){
 				}
 			}
 			pY -= steps; // Update player position
+			iTotalSteps += 1;
 		}
 		return true;
 		
@@ -218,6 +222,7 @@ bool vMove(int direction, int steps, int level){
 				}
 			}
 			pY += steps; // Update player position
+			iTotalSteps += 1;
 		}
 		return true;
 		
@@ -237,6 +242,7 @@ bool vMove(int direction, int steps, int level){
 				}
 			}
 			pX -= steps; // Update player position
+			iTotalSteps += 1;
 		}
 		return true;
 		
@@ -256,7 +262,9 @@ bool vMove(int direction, int steps, int level){
 				}
 			}
 			pX += steps; // Update player position
+			iTotalSteps += 1;
 		}
+		
 		return true;
 		
 	}else{
@@ -273,7 +281,7 @@ void vStartGame(int level){
 		}else{
 			vGenerateBomb(level);
 		}
-		vGetBomb(level);
+//		vGetBomb(level);
 		
 		// Platform
 		vBuildPlatform();
@@ -307,6 +315,7 @@ void vStartGame(int level){
 		}
 	}
 	vCheckBomb(iBombX, iBombY, _iLevel);
+//	vGetBomb(level);
 	vGetPlatform(); // print valid movement platform
 }
 
@@ -328,6 +337,20 @@ int main(int argc, char *argv[]) {
 	
 	// Start Game
 	do{
+		if(pX == 19 && pY == 49){
+			printf("You reached the end! \n");
+			if(iTotalSteps < 20){
+				printf("Total steps: %d. You need to try harder! \n", iTotalSteps);
+			}else if(iTotalSteps >= 20 && iTotalSteps <= 50){
+				printf("Total steps: %d. You need a better luck! \n");
+			}else if(iTotalSteps > 50 && iTotalSteps <= 80){
+				printf("Total steps: %d. Not too bad! \n");
+			}else if(iTotalSteps > 80){
+				printf("Total steps: %d. You need the talent! \n");
+			}
+			break;
+		}
+		
 		vStartGame(_iLevel);
 		
 		if(iLife <= 0){
