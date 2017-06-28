@@ -83,18 +83,57 @@ void vCheckBomb(int *bombX, int *bombY, int level){
 	// printf("length now: %d \n", length);
 	
 	if(_iDirection == 1){ // 1 - Left
-		// TODO
+		// X remain, Y check
+		// Check iBombX = player position row
+		int i;
+		for(i = 0; i < length; i++){ 				// iBombX check
+			if(bombX[i] == pX){ 					// Row found
+				if(pY <= bombY[i]){					// Col found
+					printf("[BOMB!!!!!] %d %d \n", bombX[i], bombY[i]);
+					bombX[i] = 0;
+					bombY[i] = 0;
+					iLife -= 1;
+				}
+			}
+		}
 	}else if(_iDirection == 2){ // 2 - Right
 		// X remain, Y check
 		// Check iBombX = player position row
-		int i, j, k;
+		int i;
 		for(i = 0; i < length; i++){ 				// iBombX check
 			if(bombX[i] == pX){ 					// Row found
 				if(pY >= bombY[i]){					// Col found
 					printf("[BOMB!!!!!] %d %d \n", bombX[i], bombY[i]);
 					bombX[i] = 0;
 					bombY[i] = 0;
-					vGetBomb(level);
+					iLife -= 1;
+				}
+			}
+		}
+	}else if(_iDirection == 3){ // 3 - Up
+		// Y remain, X check
+		// Check iBombY = player position col
+		int j;
+		for(j = 0; j < length; j++){
+			if(bombY[j] == pY){
+				if(pX <= bombX[j]){
+					printf("[BOMB!!!!!] %d %d \n", bombX[j], bombY[j]);
+					bombX[j] = 0;
+					bombY[j] = 0;
+					iLife -= 1;
+				}
+			}
+		}
+	}else if(_iDirection == 4){ // 4 - Down
+		// Y remain, X check
+		// Check iBombY = player position col
+		int j;
+		for(j = 0; j < length; j++){
+			if(bombY[j] == pY){
+				if(pX >= bombX[j]){
+					printf("[BOMB!!!!!] %d %d \n", bombX[j], bombY[j]);
+					bombX[j] = 0;
+					bombY[j] = 0;
 					iLife -= 1;
 				}
 			}
@@ -271,9 +310,6 @@ void vStartGame(int level){
 	vGetPlatform(); // print valid movement platform
 }
 
-
-
-
 int main(int argc, char *argv[]) {
 	srand(time(NULL)); // Random seed
 
@@ -288,7 +324,7 @@ int main(int argc, char *argv[]) {
 		}else{
 			break;
 		}
-	}while(1);
+	}while(true);
 	
 	// Start Game
 	do{
@@ -298,7 +334,7 @@ int main(int argc, char *argv[]) {
 			printf("Game over. Remaining life: %d \n", iLife);
 			break;
 		}
-	}while(1);
+	}while(true);
 	
 	return 0;
 } 
